@@ -205,9 +205,10 @@
     }
 
 
-    var mouseDown = false;
+    var mouseDownOrTouchActive = false;
     var lastMouseX = null;
     var lastMouseY = null;
+    var touchId = null;
 
     var moonRotationMatrix = mat4.create();
     mat4.identity(moonRotationMatrix);
@@ -215,7 +216,7 @@
 
 
     function handleMouseDown(event) {
-        mouseDown = true;
+        mouseDownOrTouchActive = true;
         lastMouseX = event.clientX;
         lastMouseY = event.clientY;
     }
@@ -224,7 +225,8 @@
       evt.preventDefault();
       var touches = evt.changedTouches;
         
-      if (touches.length > 0) {
+      if (touches.length == 1 && !mouseDownOrTouchActive ) {
+        touchId = touches[0].identifier; 
         lastMouseX = touches[0].pageX, 
         lastMouseY = touches[0].pageY;
       }
@@ -233,12 +235,12 @@
 
 
     function handleMouseUpOrTouchEnd(event) {
-        mouseDown = false;
+        mouseDownOrTouchActive = false;
     }
 
 
     function handleMouseMove(event) {
-        if (!mouseDown) {
+        if (!mouseDownOrTouchActive) {
             return;
         }
         var newX = event.clientX;
@@ -267,7 +269,7 @@
       evt.preventDefault();
       var touches = evt.changedTouches;
 
-      if (touches.length > 0) {
+      if (touches.length == 1 && touchId == touches[0].identifier) {
         var newX = touches[0].pageX;
         var newY = touches[0].pageY;
         processDrag(newX, newY);
@@ -420,7 +422,6 @@
         drawScene();
     }
 
-    var mydiv;
 
     function webGLStart() {
         var canvas = document.getElementById("lesson11-canvas");
@@ -436,12 +437,11 @@
         document.onmouseup = handleMouseUpOrTouchEnd;
         document.onmousemove = handleMouseMove;
 
-        el = document.getElementById('mydiv');
-        el.addEventListener("touchstart", handleTouchStart, false);
-        el.addEventListener("touchend", handleMouseUpOrTouchEnd, false);
-        el.addEventListener("touchcancel", handleMouseUpOrTouchEnd, false);
-        el.addEventListener("touchleave", handleMouseUpOrTouchEnd, false);
-        el.addEventListener("touchmove", handleTouchMove, false);
+        canvas.addEventListener("touchstart", handleTouchStart, false);
+        canvas.addEventListener("touchend", handleMouseUpOrTouchEnd, false);
+        canvas.addEventListener("touchcancel", handleMouseUpOrTouchEnd, false);
+        canvas.addEventListener("touchleave", handleMouseUpOrTouchEnd, false);
+        canvas.addEventListener("touchmove", handleTouchMove, false);
 
         tick();
     }
@@ -456,9 +456,8 @@
 <body onload="webGLStart();">
     <a href="http://learningwebgl.com/blog/?p=1253">&lt;&lt; Back to Lesson 11</a><br />
 
-    <div id="mydiv">
-      <canvas id="lesson11-canvas" style="border: none;" width="500" height="500"></canvas>
-    </div>
+
+    <canvas id="lesson11-canvas" style="border: none;" width="500" height="500"></canvas>
     <br/>
 
     <input type="checkbox" id="lighting" checked /> Use lighting<br/>
