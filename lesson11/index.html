@@ -213,8 +213,6 @@
     var moonRotationMatrix = mat4.create();
     mat4.identity(moonRotationMatrix);
 
-
-
     function handleMouseDown(event) {
         mouseDownOrTouchActive = true;
         lastMouseX = event.clientX;
@@ -232,12 +230,9 @@
       }
     }
 
-
-
     function handleMouseUpOrTouchEnd(event) {
         mouseDownOrTouchActive = false;
     }
-
 
     function handleMouseMove(event) {
         if (!mouseDownOrTouchActive) {
@@ -247,7 +242,17 @@
         var newY = event.clientY;
 
         processDrag(newX, newY);
+    }
 
+    function handleTouchMove(evt) {
+      evt.preventDefault();
+      var touches = evt.changedTouches;
+
+      if (touches.length == 1 && touchId == touches[0].identifier) {
+        var newX = touches[0].pageX;
+        var newY = touches[0].pageY;
+        processDrag(newX, newY);
+      }
     }
 
     function processDrag(newX, newY) {
@@ -263,18 +268,6 @@
 
         lastMouseX = newX
         lastMouseY = newY;
-    }
-
-    function handleTouchMove(evt) {
-      evt.preventDefault();
-      var touches = evt.changedTouches;
-
-      if (touches.length == 1 && touchId == touches[0].identifier) {
-        var newX = touches[0].pageX;
-        var newY = touches[0].pageY;
-        processDrag(newX, newY);
-      }
-      
     }
 
     var moonVertexPositionBuffer;
