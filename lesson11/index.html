@@ -221,7 +221,7 @@
 
     function handleTouchStart(evt) {
       evt.preventDefault();
-      var touches = evt.changedTouches;
+      var touches = evt.targetTouches;
         
       if (touches.length == 1 && !mouseDownOrTouchActive ) {
         touchId = touches[0].identifier; 
@@ -246,7 +246,7 @@
 
     function handleTouchMove(evt) {
       evt.preventDefault();
-      var touches = evt.changedTouches;
+      var touches = evt.targetTouches;
 
       if (touches.length == 1 && touchId == touches[0].identifier) {
         var newX = touches[0].pageX;
